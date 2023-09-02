@@ -5,7 +5,7 @@ import { createNewTable, getAll, insertData } from "../database/mysqlGames"
 const getAllGames = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const result = await getAll()
-		return res.status(200).json({ data: result })
+		return res.status(200).json({ result })
 	} catch (error) {
 		return res.status(500).json({ error })
 	}
