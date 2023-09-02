@@ -10,7 +10,7 @@ const pool = mysql.createPool(params).promise()
 
 export async function getAll() {
 	try {
-		const [result] = await pool.query(`SELECT * FROM gamess`)
+		const [result] = await pool.query(`SELECT * FROM games`)
 		return result
 	} catch (error) {
 		const err = Error(`getAll: ${error}`)
