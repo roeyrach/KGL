@@ -1,0 +1,29 @@
+/* Set the base font size */
+html {
+	font-size: 16px;
+}
+
+.search {
+	width: 31.25rem; /* 500px converted to rem */
+	height: 2.5rem; /* 40px converted to rem */
+	margin: 5rem auto; /* 150px converted to rem */
+	background: #444;
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 0.1875rem; /* 3px converted to rem */
+	border: 0.0625rem solid #fff; /* 1px converted to rem */
+}
+
+.input {
+	width: 100%; /* 370px converted to rem */
+	padding: 0.625rem 0.3125rem; /* 10px 5px converted to rem */
+	float: left;
+	color: #ccc;
+	font-size: large;
+	border: 0;
+	background: transparent;
+	border-radius: 0.1875rem 0 0 0.1875rem; /* 3px converted to rem */
+	&:focus {
+		outline: 0;
+		background: transparent;
+	}
+}
