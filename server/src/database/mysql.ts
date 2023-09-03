@@ -1,9 +1,25 @@
 import mysql from "mysql2"
 import config from "../config/config"
+import Logging from "../library/Logging"
 
 const params = config.server.mysql
 
 const pool = mysql.createPool(params).promise()
+
+export async function createNewTable(tableName: string, columnDefinitions: string[]) {
+	try {
+		// Define the SQL query to create the table
+		const createTableQuery = `
+            CREATE TABLE IF NOT EXISTS ${tableName} (
+            ${columnDefinitions.join(", ")}
+            )
+            `
+		await pool.query(createTableQuery)
+	} catch (error) {
+		const err = Error(`createNewTable: ${error}`)
+		Logging.error(err)
+	}
+}
 
 async function getAll(db: string) {
 	const [result] = await pool.query(`SELECT * FROM ${db}`)

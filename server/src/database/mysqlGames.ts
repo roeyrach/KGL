@@ -18,21 +18,6 @@ export async function getAll() {
 	}
 }
 
-export async function createNewTable(tableName: string, columnDefinitions: string[]) {
-	try {
-		// Define the SQL query to create the table
-		const createTableQuery = `
-            CREATE TABLE IF NOT EXISTS ${tableName} (
-            ${columnDefinitions.join(", ")}
-            )
-            `
-		await pool.query(createTableQuery)
-	} catch (error) {
-		const err = Error(`createNewTable: ${error}`)
-		Logging.error(err)
-	}
-}
-
 export async function insertData() {
 	try {
 		const games = await insertFromJSON(filename)

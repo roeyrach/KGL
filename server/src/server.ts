@@ -3,7 +3,8 @@ import http from "http"
 import config from "./config/config"
 import Logging from "./library/Logging"
 import cors from "cors"
-import gamesRoutes from "./routes/games"
+import gamesRoutes from "./routes/Games"
+import userRoutes from "./routes/User"
 
 const router = express()
 
@@ -14,10 +15,10 @@ router.use(cors())
 const StartServer = () => {
 	router.use((req, res, next) => {
 		/** Log the Request */
-		Logging.info(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}]`)
+		Logging.req(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}]`)
 		res.on("finish", () => {
 			/** Log the Response */
-			Logging.info(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`)
+			Logging.res(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`)
 		})
 
 		next()
@@ -40,6 +41,7 @@ const StartServer = () => {
 
 	/** Routes */
 	router.use("/games", gamesRoutes)
+	router.use("/users", userRoutes)
 
 	/** Healthcheck */
 	router.get("/ping", (req, res, next) => res.status(200).json({ message: "pong" }))
