@@ -1,0 +1,47 @@
+/* app-bar.css */
+
+/* Main app bar container */
+.app-bar {
+	position: fixed; /* Lock the app bar to the top */
+	top: 0; /* Position it at the top of the viewport */
+	left: 0;
+	right: 0;
+	background-color: #333; /* Change to your preferred background color */
+	color: #fff; /* Change to your preferred text color */
+	padding: 10px 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+	width: 100%;
+	z-index: 100;
+}
+
+/* Logo or app name */
+.app-name {
+	font-size: 1.5rem; /* Adjust font size as needed */
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+/* Navigation links */
+.nav-links {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.nav-links li {
+	display: inline;
+	margin-right: 20px; /* Adjust spacing between links */
+}
+
+.nav-links a {
+	text-decoration: none;
+	color: #fff; /* Change link color */
+	transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+	color: #2929ff; /* Change link color on hover */
+}

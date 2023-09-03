@@ -41,7 +41,7 @@ function GenericList({ Component, fetch, ...args }) {
 	}
 
 	return (
-		<div>
+		<div className="body">
 			<SearchBar handleSearch={handleSearch}></SearchBar>
 			<div className="generic-list-container">{renderedList}</div>
 		</div>
