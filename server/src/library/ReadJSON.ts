@@ -1,14 +1,5 @@
 import fs from "fs"
-
-interface Game {
-	id: string
-	slug: string
-	title: string
-	providerName: string
-	thumb: {
-		url: string
-	}
-}
+import Game from "../models/Games"
 
 async function insertFromJSON(filename: string): Promise<Game[]> {
 	try {

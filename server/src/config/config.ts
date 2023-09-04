@@ -9,6 +9,7 @@ const MYSQL_HOST = process.env.MYSQL_HOST || "localhost"
 const MYSQL_DATABASE = process.env.MYSQL_DATABASE || "test"
 const MYSQL_USER = process.env.MYSQL_USER || "root"
 const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || "mysql"
+const SALT = Number(process.env.SALT)
 
 const MYSQL = {
 	host: MYSQL_HOST,
@@ -21,6 +22,9 @@ const config = {
 	server: {
 		mysql: MYSQL,
 		port: SERVER_PORT,
+	},
+	keys: {
+		salt: SALT,
 	},
 }
 

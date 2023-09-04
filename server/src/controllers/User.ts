@@ -27,11 +27,17 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 }
 
 async function deleteUser(req: Request, res: Response, next: NextFunction) {
-	const { email } = req.params
+	const { email, password } = req.body
 	try {
 		const [existingUser] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
 		// Check if user already exists
 		if (Array.isArray(existingUser) && existingUser.length === 0) return res.status(400).send({ error: "User not found" })
+
+		const existingPassword: any = existingUser
+
+		// Compare hashed passwords
+		const passwordMatch = await bcrypt.comapred(password, existingPassword[0].password)
+		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
 
 		//Delete the user
 		await pool.query("DELETE FROM users WHERE email = ?", [email])
@@ -53,9 +59,9 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
 		// Compare hashed passwords
 		const passwordMatch = await bcrypt.comapred(password, existingPassword[0].password)
-		if (!passwordMatch) return res.status(401).json({ message: "Password does not match" })
+		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
 
-		return res.status(200).json({ message: true })
+		return res.status(200).json({ message: "Password does not match", state: true })
 	} catch (error) {
 		Logging.error("Error login user:" + error)
 		res.status(500).json({ error: "Internal server error" })
