@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import "./App.css"
-import { getAllGames } from "./API/axios"
-import GenericList from "./components/GenericList/GenericList"
-import Card from "./components/Card/Card"
 import AppBar from "./components/AppBar/AppBar"
 import { Provider } from "react-redux"
 import store from "./redux/store"
+import SignIn from "./pages/Auth/SignIn"
+import SignUp from "./pages/Auth/SignUp"
+import Home from "./pages/Home"
 
 function App() {
 	return (
@@ -14,7 +14,9 @@ function App() {
 				<Router>
 					<AppBar />
 					<Routes>
-						<Route path="/" element={<GenericList Component={Card} fetch={getAllGames}></GenericList>} />
+						<Route path="/" element={<Home />} />
+						<Route path="/sign-up" element={<SignUp />} />
+						<Route path="/sign-in" element={<SignIn />} />
 					</Routes>
 				</Router>
 			</div>

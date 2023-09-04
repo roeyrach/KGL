@@ -10,10 +10,10 @@ function AppBar() {
 					<a href="/">Home</a>
 				</li>
 				<li>
-					<a href="/about">About</a>
+					<a href="/sign-up">Sign Up</a>
 				</li>
 				<li>
-					<a href="/contact">Contact</a>
+					<a href="/sign-in">Sign In</a>
 				</li>
 			</ul>
 		</div>

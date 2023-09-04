@@ -11,7 +11,6 @@ function GenericList({ Component, fetch, ...args }) {
 		const fetchData = async () => {
 			try {
 				await fetch().then((items) => {
-					console.log("fetched array")
 					setOriginalList(items) // Store the original list
 					setList(items) // Initialize list with the original data
 				})

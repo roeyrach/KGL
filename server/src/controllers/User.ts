@@ -2,19 +2,22 @@ import { NextFunction, Request, Response } from "express"
 import mysql from "mysql2"
 import config from "../config/config"
 import Logging from "../library/Logging"
+import jwt from "jsonwebtoken"
 const bcrypt = require("bcrypt")
 
 const params = config.server.mysql
 const pool = mysql.createPool(params).promise()
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
-	const { username, email, password, token } = req.body
+	const { username, email, password } = req.body
 
 	try {
 		const [existingUsers] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
 
 		// Check if user already exists
 		if (!Array.isArray(existingUsers) || existingUsers.length !== 0) return res.status(400).send({ status: "User already exists" })
+
+		const token = jwt.sign({ username, password, email }, "secret")
 
 		// Insert the new user
 		await pool.query("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?)", [username, email, password, token])
