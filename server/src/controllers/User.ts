@@ -17,7 +17,8 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 		// Check if user already exists
 		if (!Array.isArray(existingUsers) || existingUsers.length !== 0) return res.status(400).send({ status: "User already exists" })
 
-		const token = jwt.sign({ username, password, email }, "secret")
+		// Create JWT access token
+		const token = jwt.sign({ password, email }, config.keys.token)
 
 		// Insert the new user
 		await pool.query("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?)", [username, email, password, token])
@@ -26,29 +27,6 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 	} catch (error) {
 		Logging.error("Error creating user:" + error)
 		res.sendStatus(500)
-	}
-}
-
-async function deleteUser(req: Request, res: Response, next: NextFunction) {
-	const { email, password } = req.body
-	try {
-		const [existingUser] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
-		// Check if user already exists
-		if (Array.isArray(existingUser) && existingUser.length === 0) return res.status(400).send({ error: "User not found" })
-
-		const existingPassword: any = existingUser
-
-		// Compare hashed passwords
-		const passwordMatch = await bcrypt.comapred(password, existingPassword[0].password)
-		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
-
-		//Delete the user
-		await pool.query("DELETE FROM users WHERE email = ?", [email])
-
-		res.status(201).send({ message: "User deleted successfully" })
-	} catch (error) {
-		Logging.error("Error deleting user:" + error)
-		res.status(500).json({ error: "Internal server error" })
 	}
 }
 
@@ -64,9 +42,46 @@ async function login(req: Request, res: Response, next: NextFunction) {
 		const passwordMatch = await bcrypt.comapred(password, existingPassword[0].password)
 		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
 
-		return res.status(200).json({ message: "Password does not match", state: true })
+		// Create JWT access token
+		const token = jwt.sign({ password, email }, config.keys.token)
+
+		// Insert JWT access token
+		await pool.query("UPDATE users SET token = ? WHERE email = ?", [token, email])
+
+		return res.status(200).json({ message: "Password does match", state: true })
 	} catch (error) {
 		Logging.error("Error login user:" + error)
+		res.status(500).json({ error: "Internal server error" })
+	}
+}
+
+async function deleteUser(req: Request, res: Response, next: NextFunction) {
+	const { email, password } = req.body
+	try {
+		const [existingUser] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
+		// Check if user already exists
+		if (Array.isArray(existingUser) && existingUser.length === 0) return res.status(400).send({ error: "User not found" })
+
+		const user: any = existingUser
+
+		// Compare hashed passwords
+		const passwordMatch = await bcrypt.comapred(password, user[0].password)
+		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
+
+		const token = user[0].token
+
+		if (token == null) return res.status(401).json({ message: "Token does not exists", state: false })
+
+		jwt.verify(token, config.keys.token, async (err: unknown) => {
+			if (err) return res.status(403).send(err)
+
+			//Delete the user
+			await pool.query("DELETE FROM users WHERE email = ?", [email])
+
+			return res.status(201).send({ message: "User deleted successfully" })
+		})
+	} catch (error) {
+		Logging.error("Error deleting user:" + error)
 		res.status(500).json({ error: "Internal server error" })
 	}
 }
