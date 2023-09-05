@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import "./style.css"
 import { createUser } from "../../API/axios"
 
 const SignUp = () => {
+	const navigate = useNavigate()
 	const [formData, setFormData] = useState({
 		username: "",
 		email: "",
@@ -23,14 +25,19 @@ const SignUp = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 
-		await createUser(formData)
-			.then((res) => {
-				if (res === 201) alert("You have Signed up successfully!")
-				if (res.includes("400")) alert("The email address is already in use.")
-			})
-			.catch(() => {
-				alert("Somthing wrong with the registration")
-			})
+		try {
+			const res = await createUser(formData)
+			if (res.status === 201) {
+				alert("You have Signed up successfully!")
+				navigate("/sign-in")
+			} else {
+				console.log(res.success)
+				alert(res.error)
+			}
+		} catch (err) {
+			// Handle network or other errors here
+			console.error("An error occurred:", err)
+		}
 	}
 
 	return (

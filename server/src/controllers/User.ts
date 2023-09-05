@@ -35,11 +35,11 @@ async function login(req: Request, res: Response, next: NextFunction) {
 	try {
 		const [existingUser] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
 		// Check if user already exists
-		if (Array.isArray(existingUser) && existingUser.length === 0) return res.status(401).json({ message: "User not found" })
-		const existingPassword: any = existingUser
+		if (Array.isArray(existingUser) && existingUser.length === 0) return res.status(404).json({ message: "User not found" })
+		const resultUser: any = existingUser
 
 		// Compare hashed passwords
-		const passwordMatch = await bcrypt.comapred(password, existingPassword[0].password)
+		const passwordMatch = await bcrypt.compare(password, resultUser[0].password)
 		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
 
 		// Create JWT access token
@@ -48,10 +48,10 @@ async function login(req: Request, res: Response, next: NextFunction) {
 		// Insert JWT access token
 		await pool.query("UPDATE users SET token = ? WHERE email = ?", [token, email])
 
-		return res.status(200).json({ message: "Password does match", state: true })
+		return res.status(200).json({ message: "Password match", state: true, user: { username: resultUser[0].username, state: true } })
 	} catch (error) {
 		Logging.error("Error login user:" + error)
-		res.status(500).json({ error: "Internal server error" })
+		res.sendStatus(500)
 	}
 }
 
