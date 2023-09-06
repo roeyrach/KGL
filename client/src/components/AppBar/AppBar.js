@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react"
 import "./AppBar.css"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { setUser } from "../../redux/user/action"
 
 function AppBar() {
+	const dispatch = useDispatch()
 	const user = useSelector((state) => state.auth.user)
 	const [isLoggedIn, setIsLoggedIn] = useState(user?.state || false)
 
@@ -10,6 +12,11 @@ function AppBar() {
 		setIsLoggedIn(user?.state)
 		console.log(user?.state)
 	}, [user])
+
+	const handleLogOut = () => {
+		setIsLoggedIn(false)
+		dispatch(setUser(null))
+	}
 
 	return (
 		<div className="app-bar">
@@ -29,9 +36,12 @@ function AppBar() {
 					</>
 				)}
 				{isLoggedIn && (
-					<li>
-						<a href="/slot-machine">Go to Game!</a>
-					</li>
+					<>
+						<li>
+							<a href="/slot-machine">Go to Game!</a>
+						</li>
+						<button onClick={handleLogOut}>logout</button>
+					</>
 				)}
 			</ul>
 		</div>

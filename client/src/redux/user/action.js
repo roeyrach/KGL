@@ -3,18 +3,20 @@ export const GET_TOKEN = "GET_TOKEN"
 export const SET_USER = "SET_USER"
 export const GET_USER = "GET_USER"
 
-export const setToken = (token) => (dispatch) => {
-	dispatch({ type: SET_TOKEN, payload: token })
-}
+export const setToken = (token) => ({
+	type: SET_TOKEN,
+	payload: token,
+})
 
-export const getToken = () => (dispatch) => {
-	return dispatch({ type: GET_TOKEN })
-}
+export const getToken = () => ({
+	type: GET_TOKEN,
+})
 
-export const setUser = (user) => (dispatch) => {
-	dispatch({ type: SET_USER, payload: user })
-}
+export const setUser = (user) => ({
+	type: SET_USER,
+	payload: user,
+})
 
-export const getUser = () => (dispatch) => {
-	return dispatch({ type: GET_USER })
-}
+export const getUser = () => ({
+	type: GET_USER,
+})
