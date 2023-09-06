@@ -10,7 +10,6 @@ function AppBar() {
 
 	useEffect(() => {
 		setIsLoggedIn(user?.state)
-		console.log(user?.state)
 	}, [user])
 
 	const handleLogOut = () => {
@@ -40,7 +39,11 @@ function AppBar() {
 						<li>
 							<a href="/slot-machine">Go to Game!</a>
 						</li>
-						<button onClick={handleLogOut}>logout</button>
+						<li>
+							<a href="/" onClick={handleLogOut}>
+								Logout
+							</a>
+						</li>
 					</>
 				)}
 			</ul>
