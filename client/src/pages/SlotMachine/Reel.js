@@ -3,6 +3,7 @@ import Cherry from "../../images/cherry.png"
 import Banana from "../../images/banana.png"
 import Apple from "../../images/apple.png"
 import Lemon from "../../images/lemon.png"
+import "./Reel.css" // Import your CSS file
 
 const images = new Map()
 
@@ -12,7 +13,11 @@ images.set("apple", Apple)
 images.set("lemon", Lemon)
 
 function Reel({ item }) {
-	return <img style={{ width: "5rem", height: "auto" }} src={images.get(item)} alt=""></img>
+	return (
+		<div className="reel-container">
+			<img className="reel-image" src={images.get(item)} alt="" />
+		</div>
+	)
 }
 
 export default Reel

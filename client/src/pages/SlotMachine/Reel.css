@@ -1,0 +1,19 @@
+/* Reel.css (or your preferred CSS file) */
+
+/* Style for the Reel component container */
+.reel-container {
+	display: inline-block; /* Change display to inline-block */
+	width: 5rem;
+	height: 5rem;
+	background-color: #f7f7f7;
+	border: 2px solid #ddd;
+	border-radius: 10px;
+	margin: 10px; /* Adjust margin as needed */
+}
+
+/* Style for the images inside the Reel */
+.reel-image {
+	width: 100%;
+	height: 100%;
+	object-fit: contain; /* Adjust object-fit as needed */
+}
