@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react"
 import "./SlotMachine.css"
 import Reel from "./Reel"
+import reelSound from "../../assets/sounds/start_play.wav"
+import coinSound from "../../assets/sounds/coin_win.wav"
+import stopSound from "../../assets/sounds/stop.wav"
+import Button from "./ButtonSpin/Button"
 
 function SlotMachine() {
 	const reel1 = ["cherry", "lemon", "apple", "lemon", "banana", "banana", "lemon", "lemon"]
@@ -14,9 +18,11 @@ function SlotMachine() {
 	useEffect(() => {
 		const rewardHandle = () => {
 			if (!spinning) {
+				let sound = new Audio(coinSound)
 				// Check for rewards
 				if (result[0] === "cherry" && result[1] === "cherry" && result[2] === "cherry") {
 					setCoins((prevCoins) => prevCoins + 50)
+					sound.play()
 					return
 				}
 				if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
@@ -25,22 +31,27 @@ function SlotMachine() {
 				}
 				if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
 					setCoins((prevCoins) => prevCoins + 20)
+					sound.play()
 					return
 				}
 				if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
 					setCoins((prevCoins) => prevCoins + 10)
+					sound.play()
 					return
 				}
 				if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
 					setCoins((prevCoins) => prevCoins + 15)
+					sound.play()
 					return
 				}
 				if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
 					setCoins((prevCoins) => prevCoins + 5)
+					sound.play()
 					return
 				}
 				if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
 					setCoins((prevCoins) => prevCoins + 3)
+					sound.play()
 					return
 				}
 			}
@@ -54,6 +65,8 @@ function SlotMachine() {
 	const [index3, setIndex3] = useState(0)
 
 	const spinReels = () => {
+		new Audio(reelSound).play()
+		const stopOn = new Audio(stopSound)
 		if (coins === 0) return
 		if (!spinning) {
 			setCoins((current) => current - 1)
@@ -62,8 +75,8 @@ function SlotMachine() {
 
 			setSpinning(true)
 
-			const intervalDuration = 80
-			const spinDuration = 2000
+			const intervalDuration = 100
+			const spinDuration = 3000
 
 			let currentIndex1 = index1
 			let currentIndex2 = index2
@@ -88,25 +101,24 @@ function SlotMachine() {
 			}, intervalDuration)
 
 			setTimeout(() => {
-				// Simulate the stopping of the slot machine after 5 seconds
 				clearInterval(intervalId1)
 				const result1 = getRandomItem(reel1)
 				setResult((prevState) => [result1, prevState[1], prevState[2]])
+				stopOn.play()
 			}, spinDuration)
 
 			setTimeout(() => {
-				// Simulate the stopping of the slot machine after 5 seconds
 				clearInterval(intervalId2)
 				const result2 = getRandomItem(reel2)
 				setResult((prevState) => [prevState[0], result2, prevState[2]])
+				stopOn.play()
 			}, spinDuration * 2)
 
 			setTimeout(() => {
-				// Simulate the stopping of the slot machine after 5 seconds
 				clearInterval(intervalId3)
 				const result3 = getRandomItem(reel3)
 				setResult((prevState) => [prevState[0], prevState[1], result3])
-
+				stopOn.play()
 				setSpinning(false)
 			}, spinDuration * 3)
 		}
@@ -122,9 +134,7 @@ function SlotMachine() {
 					))}
 				</div>
 			</div>
-			<button className="button" onClick={spinReels} disabled={spinning}>
-				{spinning ? "Spinning..." : "Spin"}
-			</button>
+			<Button spinReels={spinReels} spinning={spinning}></Button>
 			<h1 className="coin-count">{coins}</h1>
 		</div>
 	)

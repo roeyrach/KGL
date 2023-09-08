@@ -1,8 +1,9 @@
 import React from "react"
-import Cherry from "../../images/cherry.png"
-import Banana from "../../images/banana.png"
-import Apple from "../../images/apple.png"
-import Lemon from "../../images/lemon.png"
+import Cherry from "../../assets/images/cherry.png"
+import Banana from "../../assets/images/banana.png"
+import Apple from "../../assets/images/apple.png"
+import Lemon from "../../assets/images/lemon.png"
+
 import "./Reel.css" // Import your CSS file
 
 const images = new Map()
