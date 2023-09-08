@@ -76,7 +76,7 @@ function SlotMachine() {
 			setSpinning(true)
 
 			const intervalDuration = 100
-			const spinDuration = 3000
+			const spinDuration = 2500
 
 			let currentIndex1 = index1
 			let currentIndex2 = index2
