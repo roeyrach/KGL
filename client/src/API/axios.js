@@ -60,3 +60,14 @@ export async function getAllGames() {
 		console.error(error)
 	}
 }
+
+export async function rewardHandler(result, email) {
+	try {
+		const response = await axios.post(`${BASE_URL}/users/rewardHandler`, result, email, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		if (response.status === 200) return response
+	} catch (error) {}
+}

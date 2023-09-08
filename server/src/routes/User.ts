@@ -9,7 +9,8 @@ router.post("/createUser", ValidateSchema(Schema.user.fields), Encrypt(), contro
 // router.get("/get/:userId", controller.readUser)
 router.get("/getAllUsers", controller.getAllUsers)
 // router.patch("/update/:userId", controller.updateUser)
-router.delete("/deleteUser", ValidateSchema(Schema.user.auth), controller.deleteUser)
+router.delete("/deleteUser", ValidateSchema(Schema.user.auth), Encrypt(), controller.deleteUser)
 router.post("/login", ValidateSchema(Schema.user.auth), controller.login)
+router.post("/rewardHandler", controller.rewardHandler)
 
 export = router

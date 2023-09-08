@@ -23,6 +23,7 @@ export const Schema = {
 			email: Joi.string().email().required(),
 			password: Joi.string().required(),
 			token: Joi.string(),
+			amount: Joi.number(),
 		}),
 		auth: Joi.object<User>({
 			email: Joi.string().email().required(),

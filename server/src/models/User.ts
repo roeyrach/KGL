@@ -3,4 +3,5 @@ export default interface User {
 	password: string
 	email: string
 	token: string
+	amount: number
 }

@@ -9,7 +9,7 @@ const params = config.server.mysql
 const pool = mysql.createPool(params).promise()
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
-	const { username, email, password } = req.body
+	const { username, email, password, amount } = req.body
 
 	try {
 		const [existingUsers] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
@@ -21,7 +21,13 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 		const token = jwt.sign({ password, email }, config.keys.token)
 
 		// Insert the new user
-		await pool.query("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?)", [username, email, password, token])
+		await pool.query("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?, ?)", [
+			username,
+			email,
+			password,
+			token,
+			amount,
+		])
 
 		res.sendStatus(201)
 	} catch (error) {
@@ -48,7 +54,9 @@ async function login(req: Request, res: Response, next: NextFunction) {
 		// Insert JWT access token
 		await pool.query("UPDATE users SET token = ? WHERE email = ?", [token, email])
 
-		return res.status(200).json({ message: "Password match", state: true, user: { username: resultUser[0].username, state: true } })
+		return res
+			.status(200)
+			.json({ message: "Password match", user: { username: resultUser[0].username, email: resultUser[0].email, state: true } })
 	} catch (error) {
 		Logging.error("Error login user:" + error)
 		res.sendStatus(500)
@@ -65,7 +73,8 @@ async function deleteUser(req: Request, res: Response, next: NextFunction) {
 		const user: any = existingUser
 
 		// Compare hashed passwords
-		const passwordMatch = await bcrypt.comapred(password, user[0].password)
+		console.log(password, user[0].password)
+		const passwordMatch = await bcrypt.compare(password, user[0].password)
 		if (!passwordMatch) return res.status(401).json({ message: "Password does not match", state: false })
 
 		const token = user[0].token
@@ -91,4 +100,53 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
 	return res.status(200).send(result)
 }
 
-export default { createUser, getAllUsers, deleteUser, login }
+async function rewardHandler(req: Request, res: Response, next: NextFunction) {
+	const { result, email } = req.body
+	console.log(result, email)
+	try {
+		const query = `UPDATE users
+		SET amount = amount + ?
+		WHERE email = ?;
+		`
+		if (result[0] === "cherry" && result[1] === "cherry" && result[2] === "cherry") {
+			await pool.query(query, [50, email])
+			return res.sendStatus(200)
+		}
+		if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
+			await pool.query(query, [40, email])
+			return res.sendStatus(200)
+		}
+		if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
+			await pool.query(query, [20, email])
+			return res.sendStatus(200)
+		}
+		if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
+			await pool.query(query, [10, email])
+			return res.sendStatus(200)
+		}
+		if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
+			await pool.query(query, [15, email])
+			return res.sendStatus(200)
+		}
+		if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
+			await pool.query(query, [5, email])
+			return res.sendStatus(200)
+		}
+		if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
+			await pool.query(query, [3, email])
+			return res.sendStatus(200)
+		}
+		await pool.query(
+			`UPDATE users
+			SET amount = amount - 1
+			WHERE email = ? AND amount > 0;			
+			`,
+			[email]
+		)
+		return res.sendStatus(200)
+	} catch (error) {
+		res.sendStatus(500)
+	}
+}
+
+export default { createUser, getAllUsers, deleteUser, login, rewardHandler }
