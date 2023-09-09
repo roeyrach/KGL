@@ -9,6 +9,9 @@
 	user-select: none;
 	-webkit-user-select: none;
 	touch-action: manipulation;
+	height: 5rem;
+	width: 6rem;
+	border-radius: 50%; /* Make the button round */
 }
 
 .button-82-shadow {
@@ -17,11 +20,12 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	border-radius: 12px;
-	background: hsl(0deg 0% 0% / 0.25);
+	border-radius: 50%; /* Make the shadow round */
+	background: linear-gradient(45deg, rgb(0, 49, 163) 8%, rgb(3, 49, 109)); /* Blue gradient background */
 	will-change: transform;
 	transform: translateY(2px);
 	transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+	box-shadow: 0 0 20px rgba(0, 0, 255, 0.5); /* Add a shiny box shadow */
 }
 
 .button-82-edge {
@@ -30,22 +34,23 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	border-radius: 12px;
-	background: linear-gradient(to left, rgb(4, 121, 66) 0%, rgb(0, 163, 109) 8%, rgb(3, 109, 38) 92%, rgb(3, 99, 43) 100%);
+	border-radius: 50%; /* Make the edge round */
+	background: linear-gradient(to left, rgb(48, 8, 222) 0%, rgb(0, 49, 163) 8%, rgb(3, 49, 109) 92%, rgb(3, 6, 99) 100%);
 }
 
 .button-82-front {
 	display: block;
 	position: relative;
 	padding: 12px 27px;
-	border-radius: 12px;
+	border-radius: 50%; /* Make the front round */
 	font-size: 1.1rem;
 	font-family: "Brush Script MT", cursive;
 	color: white;
-	background: rgb(14, 175, 113);
+	background: linear-gradient(45deg, #0074b3, #00a3b7); /* Blue gradient background */
 	will-change: transform;
 	transform: translateY(-4px);
 	transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+	height: 3rem;
 }
 
 @media (min-width: 768px) {

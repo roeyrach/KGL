@@ -1,54 +1,40 @@
-/* SlotMachine.css (or your preferred CSS file) */
-
-/* Container for the SlotMachine */
 .slot-machine {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	padding: 2rem;
-	background-color: #f4f4f4; /* Background color */
+	background: linear-gradient(to bottom, #b00f0f, #d86060); /* Linear gradient background */
 	border: 2px solid #333; /* Border style */
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow */
 	font-family: Arial, sans-serif; /* Font family */
+	color: #fff; /* Text color */
+	width: 100%;
+	height: 100%;
 }
 
 /* Header styling */
-.slot-machine h1 {
-	font-size: 2rem; /* Header font size */
-	margin-bottom: 1rem;
-	color: #333; /* Header text color */
+
+.reels-container {
+	background-color: rgb(241, 211, 40); /* Gold color for the container */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+	border-radius: 10px; /* Border radius */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 0.5rem; /* Adjust padding as needed */
+	margin: 0.1rem; /* Adjust margin as needed */
 }
 
 /* Reels container */
 .reels {
 	display: flex;
-	flex-direction: row; /* Display the reels horizontally */
+	flex-direction: row;
 	margin-bottom: 1.5rem;
-}
-
-/* Button styling */
-.button {
-	background-color: #007bff; /* Button background color */
-	color: #fff; /* Button text color */
-	border: none;
-	border-radius: 5px;
-	padding: 0.5rem 1rem;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-}
-
-.button:disabled {
-	background-color: #ccc; /* Disabled button color */
-	cursor: not-allowed;
-}
-
-/* Coin count styling */
-.coin-count {
-	font-size: 1.5rem;
-	color: #333;
-	font-weight: bold;
+	background: linear-gradient(to right, #000, #222); /* Linear gradient background */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow */
+	border-radius: 10px; /* Border radius */
+	padding: 0.2rem; /* Adjust padding as needed */
 }
 
 /* Slot Reel item styling */
@@ -64,4 +50,19 @@
 	border: 2px solid #ddd; /* Reel item border style */
 	border-radius: 10px; /* Reel item border radius */
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reel item box shadow */
+}
+
+.coins {
+	margin: 1rem;
+}
+
+/* Coin count styling */
+.coin-count {
+	font-size: 1.5rem;
+	color: #ffffff;
+	font-weight: bold;
+}
+.coinsSVG {
+	width: 3rem;
+	height: auto;
 }

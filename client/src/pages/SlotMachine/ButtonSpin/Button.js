@@ -6,7 +6,7 @@ function Button({ spinReels, spinning }) {
 		<button id="hit" className="button-82-pushable" onClick={spinReels} disabled={spinning}>
 			<span className="button-82-shadow"></span>
 			<span className="button-82-edge"></span>
-			<span className="button-82-front text"> Spin </span>
+			<span className="button-82-front text"> </span>
 		</button>
 	)
 }

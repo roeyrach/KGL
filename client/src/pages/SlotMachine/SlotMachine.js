@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react"
 import "./SlotMachine.css"
+import pngegg from "../../assets/images/pngegg.png"
 import Reel from "./Reel"
 import reelSound from "../../assets/sounds/start_play.wav"
 import coinSound from "../../assets/sounds/coin_win.wav"
@@ -8,6 +9,7 @@ import Button from "./ButtonSpin/Button"
 import { rewardHandler } from "../../API/axios"
 import { useSelector, useDispatch } from "react-redux"
 import { setUser } from "../../redux/user/action"
+import coinsSVG from "../../assets/images/coins-solid.svg"
 
 function SlotMachine() {
 	const user = useSelector((state) => state.auth.user)
@@ -25,7 +27,9 @@ function SlotMachine() {
 	const [last, setLast] = useState(false)
 
 	useEffect(() => {
+		console.log(last)
 		rewardHandle()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [last])
 
 	const rewardHandle = async () => {
@@ -117,16 +121,19 @@ function SlotMachine() {
 
 	return (
 		<div className="slot-machine">
-			<h1>Slot Machine</h1>
+			<img src={pngegg} alt="" className="pngegg"></img>
 			<div className="reels">
-				<div>
+				<div className="reels-container">
 					{result.map((item, index) => (
 						<Reel key={index} className="result-item" item={item} />
 					))}
 				</div>
+				<div className="coins">
+					<h1 className="coin-count">{coins}</h1>
+					<img className="coinsSVG" src={coinsSVG} alt=""></img>
+				</div>
 			</div>
 			<Button spinReels={spinReels} spinning={spinning}></Button>
-			<h1 className="coin-count">{coins}</h1>
 		</div>
 	)
 }
