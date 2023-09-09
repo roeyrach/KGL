@@ -1,68 +1,53 @@
-import React, { useEffect, useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import "./SlotMachine.css"
 import Reel from "./Reel"
 import reelSound from "../../assets/sounds/start_play.wav"
-//import coinSound from "../../assets/sounds/coin_win.wav"
+import coinSound from "../../assets/sounds/coin_win.wav"
 import stopSound from "../../assets/sounds/stop.wav"
 import Button from "./ButtonSpin/Button"
 import { rewardHandler } from "../../API/axios"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { setUser } from "../../redux/user/action"
 
 function SlotMachine() {
 	const user = useSelector((state) => state.auth.user)
+	const dispatchRef = useRef(useDispatch())
+	const dispatch = dispatchRef.current // Access dispatch from the useRef
+	let userAmount = user.amount // Access user outside of the useEffect
+
 	const reel1 = ["cherry", "lemon", "apple", "lemon", "banana", "banana", "lemon", "lemon"]
 	const reel2 = ["lemon", "apple", "lemon", "lemon", "cherry", "apple", "banana", "lemon"]
 	const reel3 = ["lemon", "apple", "lemon", "apple", "cherry", "lemon", "banana", "lemon"]
 
 	const [result, setResult] = useState([null, null, null])
 	const [spinning, setSpinning] = useState(false)
-	const [coins, setCoins] = useState(20)
+	const [coins, setCoins] = useState(userAmount)
+	const [last, setLast] = useState(false)
 
 	useEffect(() => {
-		const rewardHandle = async () => {
-			if (!spinning) {
-				//let sound = new Audio(coinSound)
-				const reward = await rewardHandler(result, user.email)
-				console.log(reward)
-				// Check for rewards
-				// if (result[0] === "cherry" && result[1] === "cherry" && result[2] === "cherry") {
-				// 	setCoins((prevCoins) => prevCoins + 50)
-				// 	sound.play()
-				// 	return
-				// }
-				// if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
-				// 	setCoins((prevCoins) => prevCoins + 40)
-				// 	return
-				// }
-				// if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
-				// 	setCoins((prevCoins) => prevCoins + 20)
-				// 	sound.play()
-				// 	return
-				// }
-				// if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
-				// 	setCoins((prevCoins) => prevCoins + 10)
-				// 	sound.play()
-				// 	return
-				// }
-				// if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
-				// 	setCoins((prevCoins) => prevCoins + 15)
-				// 	sound.play()
-				// 	return
-				// }
-				// if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
-				// 	setCoins((prevCoins) => prevCoins + 5)
-				// 	sound.play()
-				// 	return
-				// }
-				// if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
-				// 	setCoins((prevCoins) => prevCoins + 3)
-				// 	sound.play()
-				// 	return
-				// }
+		rewardHandle()
+	}, [last])
+
+	const rewardHandle = async () => {
+		let sound = new Audio(coinSound)
+		if (result[0] !== null && result[1] !== null && result[2] !== null) {
+			console.log(result)
+			const reward = await rewardHandler(result, user.email)
+			console.log(reward.data)
+			const rewardAmount = parseInt(reward?.data?.amount)
+			console.log(userAmount, rewardAmount) // Logging rewardAmount for debugging
+			if (!isNaN(userAmount) && !isNaN(rewardAmount)) {
+				const total = userAmount + rewardAmount
+				setCoins(total)
+				const updatedUser = {
+					...user,
+					amount: total,
+				}
+				dispatch(setUser(updatedUser))
+				sound.play()
 			}
 		}
-		rewardHandle()
-	}, [result, spinning, user.email])
+	}
 
 	const opts = ["cherry", "lemon", "apple", "banana"]
 	const [index1, setIndex1] = useState(0)
@@ -81,7 +66,7 @@ function SlotMachine() {
 			setSpinning(true)
 
 			const intervalDuration = 100
-			const spinDuration = 2500
+			const spinDuration = 500
 
 			let currentIndex1 = index1
 			let currentIndex2 = index2
@@ -125,6 +110,7 @@ function SlotMachine() {
 				setResult((prevState) => [prevState[0], prevState[1], result3])
 				stopOn.play()
 				setSpinning(false)
+				setLast(!last)
 			}, spinDuration * 3)
 		}
 	}

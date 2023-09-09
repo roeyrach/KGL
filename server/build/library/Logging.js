@@ -12,4 +12,6 @@ Logging.log = (args) => _a.info(args);
 Logging.info = (args) => console.log(chalk_1.default.white(`[${new Date().toLocaleString()}] [INFO]`), typeof args === "string" ? chalk_1.default.white(args) : args);
 Logging.warn = (args) => console.log(chalk_1.default.yellow(`[${new Date().toLocaleString()}] [INFO]`), typeof args === "string" ? chalk_1.default.yellowBright(args) : args);
 Logging.error = (args) => console.log(chalk_1.default.red(`[${new Date().toLocaleString()}] [INFO]`), typeof args === "string" ? chalk_1.default.redBright(args) : args);
+Logging.req = (args) => console.log(chalk_1.default.blue(`[${new Date().toLocaleString()}] [INFO]`), typeof args === "string" ? chalk_1.default.blue(args) : args);
+Logging.res = (args) => console.log(chalk_1.default.green(`[${new Date().toLocaleString()}] [INFO]`), typeof args === "string" ? chalk_1.default.green(args) : args);
 exports.default = Logging;

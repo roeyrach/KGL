@@ -54,9 +54,10 @@ async function login(req: Request, res: Response, next: NextFunction) {
 		// Insert JWT access token
 		await pool.query("UPDATE users SET token = ? WHERE email = ?", [token, email])
 
-		return res
-			.status(200)
-			.json({ message: "Password match", user: { username: resultUser[0].username, email: resultUser[0].email, state: true } })
+		return res.status(200).json({
+			message: "Password match",
+			user: { username: resultUser[0].username, email: resultUser[0].email, amount: resultUser[0].amount, state: true },
+		})
 	} catch (error) {
 		Logging.error("Error login user:" + error)
 		res.sendStatus(500)
@@ -103,48 +104,64 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
 async function rewardHandler(req: Request, res: Response, next: NextFunction) {
 	const { result, email } = req.body
 	console.log(result, email)
+
 	try {
 		const query = `UPDATE users
 		SET amount = amount + ?
 		WHERE email = ?;
-		`
+	  `
+
+		let amount = 0
+
 		if (result[0] === "cherry" && result[1] === "cherry" && result[2] === "cherry") {
-			await pool.query(query, [50, email])
-			return res.sendStatus(200)
+			amount = 50
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
+			amount = 40
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
+			amount = 20
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
+			amount = 10
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
+			amount = 15
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
+			amount = 5
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
+			amount = 3
+			await pool.query(query, [amount, email])
+			return res.status(200).json({ amount })
+		} else {
+			// Retrieve the updated amount from the database
+			const [ret] = await pool.query(
+				`SELECT amount
+						  FROM users
+						  WHERE email = ? AND amount > 0;
+						`,
+				[email]
+			)
+
+			if (Array.isArray(ret) && ret.length > 0) {
+				amount = -1
+			}
+
+			// Execute the query with the determined amount
+			await pool.query(query, [amount, email])
+
+			return res.status(200).json({ amount: amount })
 		}
-		if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
-			await pool.query(query, [40, email])
-			return res.sendStatus(200)
-		}
-		if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
-			await pool.query(query, [20, email])
-			return res.sendStatus(200)
-		}
-		if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
-			await pool.query(query, [10, email])
-			return res.sendStatus(200)
-		}
-		if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
-			await pool.query(query, [15, email])
-			return res.sendStatus(200)
-		}
-		if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
-			await pool.query(query, [5, email])
-			return res.sendStatus(200)
-		}
-		if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
-			await pool.query(query, [3, email])
-			return res.sendStatus(200)
-		}
-		await pool.query(
-			`UPDATE users
-			SET amount = amount - 1
-			WHERE email = ? AND amount > 0;			
-			`,
-			[email]
-		)
-		return res.sendStatus(200)
 	} catch (error) {
+		console.error(error)
 		res.sendStatus(500)
 	}
 }

@@ -5,9 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
-const config_1 = require("./config/config");
+const config_1 = __importDefault(require("./config/config"));
 const Logging_1 = __importDefault(require("./library/Logging"));
 const cors_1 = __importDefault(require("cors"));
+const Games_1 = __importDefault(require("./routes/Games"));
+const User_1 = __importDefault(require("./routes/User"));
 const router = (0, express_1.default)();
 /** Use cors middlware */
 router.use((0, cors_1.default)());
@@ -15,10 +17,10 @@ router.use((0, cors_1.default)());
 const StartServer = () => {
     router.use((req, res, next) => {
         /** Log the Request */
-        Logging_1.default.info(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}]`);
+        Logging_1.default.req(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}]`);
         res.on("finish", () => {
             /** Log the Response */
-            Logging_1.default.info(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`);
+            Logging_1.default.res(`Incoming -> Method: [${req.method} - Url: ${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`);
         });
         next();
     });
@@ -35,6 +37,8 @@ const StartServer = () => {
         next();
     });
     /** Routes */
+    router.use("/games", Games_1.default);
+    router.use("/users", User_1.default);
     /** Healthcheck */
     router.get("/ping", (req, res, next) => res.status(200).json({ message: "pong" }));
     /** Error handling */
@@ -43,7 +47,7 @@ const StartServer = () => {
         Logging_1.default.error(error);
         return res.status(404).json({ message: error.message });
     });
-    http_1.default.createServer(router).listen(config_1.config.server.port, () => Logging_1.default.info(`Server listening on port ${config_1.config.server.port}.`));
+    http_1.default.createServer(router).listen(config_1.default.server.port, () => Logging_1.default.info(`Server listening on port ${config_1.default.server.port}`));
 };
 Logging_1.default.info("Connection established");
 StartServer();
