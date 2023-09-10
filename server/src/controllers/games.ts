@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
-import Logging from "../library/Logging"
-import { getAll, insertData } from "../database/MySqlGames"
+import { getAll, insertData, createNew } from "../database/MySqlGames"
 import { createNewTable } from "../database/mysql"
+import Game from "../models/Games"
 
 const getAllGames = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -31,4 +31,21 @@ const insertAllGames = async (req: Request, res: Response, next: NextFunction) =
 	}
 }
 
-export default { createTable, getAllGames, insertAllGames }
+const createGame = async (req: Request, res: Response, next: NextFunction) => {
+	const { id, slug, title, providerName, thumb } = req.body
+	const game: Game = {
+		id: id,
+		slug: slug,
+		title: title,
+		providerName: providerName,
+		thumb: thumb,
+	}
+	try {
+		const result = await createNew(game)
+		return res.status(201).json({ message: result })
+	} catch (error) {
+		return res.status(500).json({ error })
+	}
+}
+
+export default { createTable, getAllGames, insertAllGames, createGame }

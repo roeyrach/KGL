@@ -2,6 +2,7 @@ import mysql from "mysql2"
 import config from "../config/config"
 import insertFromJSON from "../library/ReadJSON"
 import Logging from "../library/Logging"
+import Game from "../models/Games"
 
 const filename = "C:/Users/97250/git/KGL/server/src/config/game-data.json"
 
@@ -50,5 +51,29 @@ export async function insertData() {
 		if (pool) {
 			await pool.end()
 		}
+	}
+}
+
+export async function createNew(game: Game) {
+	const { id, slug, title, providerName, thumb } = game
+	try {
+		const insertQuery = `
+		INSERT INTO games (id, slug, title, providerName, thumb)
+		VALUES (?, ?, ?, ?, ?)
+		`
+		// Check if a game with the same id already exists in the database
+		const [existingRows] = await pool.query("SELECT id FROM games WHERE id = ?", [id])
+
+		// Check the length of existingRows or if the first element is truthy
+		if (Array.isArray(existingRows) && existingRows.length === 0) {
+			// If no existing game with the same id found, insert the new game
+			await pool.query(insertQuery, [id, slug, title, providerName, thumb?.url || ""])
+			Logging.info(`Insert succeeded: ${title}`)
+		} else {
+			Logging.warn(`Skipping duplicate game: ${title}`)
+		}
+	} catch (error) {
+		const err = Error(`inserting games: ${error}`)
+		Logging.error(err)
 	}
 }
