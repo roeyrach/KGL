@@ -39,4 +39,21 @@ const insertAllGames = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         return res.status(500).json({ error });
     }
 });
-exports.default = { createTable, getAllGames, insertAllGames };
+const createGame = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, slug, title, providerName, thumb } = req.body;
+    const game = {
+        id: id,
+        slug: slug,
+        title: title,
+        providerName: providerName,
+        thumb: thumb,
+    };
+    try {
+        const result = yield (0, MySqlGames_1.createNew)(game);
+        return res.status(201).json({ message: result });
+    }
+    catch (error) {
+        return res.status(500).json({ error });
+    }
+});
+exports.default = { createTable, getAllGames, insertAllGames, createGame };

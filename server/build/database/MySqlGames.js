@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insertData = exports.getAll = void 0;
+exports.createNew = exports.insertData = exports.getAll = void 0;
 const mysql2_1 = __importDefault(require("mysql2"));
 const config_1 = __importDefault(require("../config/config"));
 const ReadJSON_1 = __importDefault(require("../library/ReadJSON"));
@@ -70,3 +70,30 @@ function insertData() {
     });
 }
 exports.insertData = insertData;
+function createNew(game) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id, slug, title, providerName, thumb } = game;
+        try {
+            const insertQuery = `
+		INSERT INTO games (id, slug, title, providerName, thumb)
+		VALUES (?, ?, ?, ?, ?)
+		`;
+            // Check if a game with the same id already exists in the database
+            const [existingRows] = yield pool.query("SELECT id FROM games WHERE id = ?", [id]);
+            // Check the length of existingRows or if the first element is truthy
+            if (Array.isArray(existingRows) && existingRows.length === 0) {
+                // If no existing game with the same id found, insert the new game
+                yield pool.query(insertQuery, [id, slug, title, providerName, (thumb === null || thumb === void 0 ? void 0 : thumb.url) || ""]);
+                Logging_1.default.info(`Insert succeeded: ${title}`);
+            }
+            else {
+                Logging_1.default.warn(`Skipping duplicate game: ${title}`);
+            }
+        }
+        catch (error) {
+            const err = Error(`inserting games: ${error}`);
+            Logging_1.default.error(err);
+        }
+    });
+}
+exports.createNew = createNew;

@@ -3,7 +3,7 @@ import http from "http"
 import config from "./config/config"
 import Logging from "./library/Logging"
 import cors from "cors"
-import gamesRoutes from "./routes/Games"
+import gamesRoutes from "./routes/Game"
 import userRoutes from "./routes/User"
 
 const router = express()

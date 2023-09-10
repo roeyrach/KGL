@@ -62,9 +62,10 @@ function login(req, res, next) {
             const token = jsonwebtoken_1.default.sign({ password, email }, config_1.default.keys.token);
             // Insert JWT access token
             yield pool.query("UPDATE users SET token = ? WHERE email = ?", [token, email]);
-            return res
-                .status(200)
-                .json({ message: "Password match", user: { username: resultUser[0].username, email: resultUser[0].email, state: true } });
+            return res.status(200).json({
+                message: "Password match",
+                user: { username: resultUser[0].username, email: resultUser[0].email, amount: resultUser[0].amount, state: true },
+            });
         }
         catch (error) {
             Logging_1.default.error("Error login user:" + error);
@@ -117,42 +118,59 @@ function rewardHandler(req, res, next) {
             const query = `UPDATE users
 		SET amount = amount + ?
 		WHERE email = ?;
-		`;
+	  `;
+            let amount = 0;
             if (result[0] === "cherry" && result[1] === "cherry" && result[2] === "cherry") {
-                yield pool.query(query, [50, email]);
-                return res.sendStatus(200);
+                amount = 50;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
-                yield pool.query(query, [40, email]);
-                return res.sendStatus(200);
+            else if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
+                amount = 40;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
-                yield pool.query(query, [20, email]);
-                return res.sendStatus(200);
+            else if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
+                amount = 20;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
-                yield pool.query(query, [10, email]);
-                return res.sendStatus(200);
+            else if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
+                amount = 10;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
-                yield pool.query(query, [15, email]);
-                return res.sendStatus(200);
+            else if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
+                amount = 15;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
-                yield pool.query(query, [5, email]);
-                return res.sendStatus(200);
+            else if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
+                amount = 5;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
-                yield pool.query(query, [3, email]);
-                return res.sendStatus(200);
+            else if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
+                amount = 3;
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount });
             }
-            yield pool.query(`UPDATE users
-			SET amount = amount - 1
-			WHERE email = ? AND amount > 0;			
-			`, [email]);
-            return res.sendStatus(200);
+            else {
+                // Retrieve the updated amount from the database
+                const [ret] = yield pool.query(`SELECT amount
+						  FROM users
+						  WHERE email = ? AND amount > 0;
+						`, [email]);
+                if (Array.isArray(ret) && ret.length > 0) {
+                    amount = -1;
+                }
+                // Execute the query with the determined amount
+                yield pool.query(query, [amount, email]);
+                return res.status(200).json({ amount: amount });
+            }
         }
         catch (error) {
+            console.error(error);
             res.sendStatus(500);
         }
     });

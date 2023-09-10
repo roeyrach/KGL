@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { getAll, insertData, createNew } from "../database/MySqlGames"
 import { createNewTable } from "../database/mysql"
-import Game from "../models/Games"
+import Game from "../models/Game"
 
 const getAllGames = async (req: Request, res: Response, next: NextFunction) => {
 	try {

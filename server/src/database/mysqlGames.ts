@@ -2,7 +2,7 @@ import mysql from "mysql2"
 import config from "../config/config"
 import insertFromJSON from "../library/ReadJSON"
 import Logging from "../library/Logging"
-import Game from "../models/Games"
+import Game from "../models/Game"
 
 const filename = "C:/Users/97250/git/KGL/server/src/config/game-data.json"
 

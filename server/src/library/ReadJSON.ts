@@ -1,5 +1,5 @@
 import fs from "fs"
-import Game from "../models/Games"
+import Game from "../models/Game"
 
 async function insertFromJSON(filename: string): Promise<Game[]> {
 	try {

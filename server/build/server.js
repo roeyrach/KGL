@@ -8,7 +8,7 @@ const http_1 = __importDefault(require("http"));
 const config_1 = __importDefault(require("./config/config"));
 const Logging_1 = __importDefault(require("./library/Logging"));
 const cors_1 = __importDefault(require("cors"));
-const Games_1 = __importDefault(require("./routes/Games"));
+const Game_1 = __importDefault(require("./routes/Game"));
 const User_1 = __importDefault(require("./routes/User"));
 const router = (0, express_1.default)();
 /** Use cors middlware */
@@ -37,7 +37,7 @@ const StartServer = () => {
         next();
     });
     /** Routes */
-    router.use("/games", Games_1.default);
+    router.use("/games", Game_1.default);
     router.use("/users", User_1.default);
     /** Healthcheck */
     router.get("/ping", (req, res, next) => res.status(200).json({ message: "pong" }));
