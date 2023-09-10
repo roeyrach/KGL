@@ -15,7 +15,7 @@ function SlotMachine() {
 	const user = useSelector((state) => state.auth.user)
 	const dispatchRef = useRef(useDispatch())
 	const dispatch = dispatchRef.current // Access dispatch from the useRef
-	let userAmount = user.amount // Access user outside of the useEffect
+	let userAmount = user?.amount // Access user outside of the useEffect
 
 	const reel1 = ["cherry", "lemon", "apple", "lemon", "banana", "banana", "lemon", "lemon"]
 	const reel2 = ["lemon", "apple", "lemon", "lemon", "cherry", "apple", "banana", "lemon"]

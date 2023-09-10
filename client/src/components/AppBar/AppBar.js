@@ -37,9 +37,6 @@ function AppBar() {
 				{isLoggedIn && (
 					<>
 						<li>
-							<a href="/slot-machine">Go to Game!</a>
-						</li>
-						<li>
 							<a href="/" onClick={handleLogOut}>
 								Logout
 							</a>

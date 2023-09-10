@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from "react"
 import "./Card.scss"
+import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 function Card({ itemInfo }) {
-	const { title, providerName, thumb } = itemInfo
+	const navigate = useNavigate()
+	const user = useSelector((state) => state.auth.user)
+	const { id, title, providerName, thumb } = itemInfo
 	const cardRef = useRef(null)
 	const [width, setWidth] = useState(0)
 	const [height, setHeight] = useState(0)
@@ -51,8 +55,23 @@ function Card({ itemInfo }) {
 		backgroundImage: `url(${thumb})`,
 	}
 
+	const navHandler = () => {
+		if (user === null) {
+			alert("You must be logged in")
+		} else {
+			navigate(`/${id}`)
+		}
+	}
+
 	return (
-		<div className="card-wrap" onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} ref={cardRef}>
+		<div
+			className="card-wrap"
+			onMouseMove={handleMouseMove}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+			ref={cardRef}
+			onClick={navHandler}
+		>
 			<div className="card" style={cardStyle}>
 				<div className="card-bg" style={{ ...cardBgTransform, ...cardBgImage }}></div>
 				<div className="card-info">
