@@ -5,6 +5,7 @@ import Reel from "./Reel"
 import reelSound from "../../assets/sounds/start_play.wav"
 import coinSound from "../../assets/sounds/coin_win.wav"
 import stopSound from "../../assets/sounds/stop.wav"
+import winSound from "../../assets/sounds/win.wav"
 import Button from "../../components/ButtonSpin/Button"
 import { rewardHandler } from "../../API/axios"
 import { useSelector, useDispatch } from "react-redux"
@@ -33,14 +34,18 @@ function SlotMachine() {
 	}, [last])
 
 	const rewardHandle = async () => {
-		let sound = new Audio(coinSound)
 		if (result[0] !== null && result[1] !== null && result[2] !== null) {
+			let sound = new Audio(coinSound)
 			console.log(result)
 			const reward = await rewardHandler(result, user.email)
 			console.log(reward.data)
 			const rewardAmount = parseInt(reward?.data?.amount)
 			console.log(userAmount, rewardAmount) // Logging rewardAmount for debugging
 			if (!isNaN(userAmount) && !isNaN(rewardAmount)) {
+				console.log(rewardAmount)
+				if (rewardAmount !== -1) {
+					new Audio(winSound).play()
+				}
 				const total = userAmount + rewardAmount
 				setCoins(total)
 				const updatedUser = {
@@ -70,7 +75,7 @@ function SlotMachine() {
 			setSpinning(true)
 
 			const intervalDuration = 100
-			const spinDuration = 500
+			const spinDuration = 1000
 
 			let currentIndex1 = index1
 			let currentIndex2 = index2
@@ -106,7 +111,7 @@ function SlotMachine() {
 				const result2 = getRandomItem(reel2)
 				setResult((prevState) => [prevState[0], result2, prevState[2]])
 				stopOn.play()
-			}, spinDuration * 2)
+			}, spinDuration * 5)
 
 			setTimeout(() => {
 				clearInterval(intervalId3)
@@ -115,7 +120,7 @@ function SlotMachine() {
 				stopOn.play()
 				setSpinning(false)
 				setLast(!last)
-			}, spinDuration * 3)
+			}, spinDuration * 8)
 		}
 	}
 

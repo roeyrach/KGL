@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import "./App.css"
-import AppBar from "./components/AppBar/AppBar"
+import AppBar from "../components/AppBar/AppBar"
 import { Provider } from "react-redux"
-import { store, persistor } from "./redux/store" // Import both the store and persistor
-import SignIn from "./pages/Auth/SignIn"
-import SignUp from "./pages/Auth/SignUp"
-import Home from "./pages/Home"
-import SlotMachine from "./pages/SlotMachine/SlotMachine"
+import { store, persistor } from "../redux/store" // Import both the store and persistor
+import SignIn from "../pages/Auth/SignIn"
+import SignUp from "../pages/Auth/SignUp"
+import Home from "../pages/Home"
+import SlotMachine from "../pages/SlotMachine/SlotMachine"
 import { PersistGate } from "redux-persist/integration/react"
 
 function App() {
