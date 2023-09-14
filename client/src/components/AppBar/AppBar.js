@@ -41,6 +41,9 @@ function AppBar() {
 								Logout
 							</a>
 						</li>
+						<li>
+							<a href="/stats">Stats</a>
+						</li>
 					</>
 				)}
 			</ul>
