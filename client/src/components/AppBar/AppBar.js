@@ -37,12 +37,12 @@ function AppBar() {
 				{isLoggedIn && (
 					<>
 						<li>
+							<a href="/stats">Stats</a>
+						</li>
+						<li>
 							<a href="/" onClick={handleLogOut}>
 								Logout
 							</a>
-						</li>
-						<li>
-							<a href="/stats">Stats</a>
 						</li>
 					</>
 				)}
