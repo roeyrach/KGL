@@ -4,4 +4,5 @@ export default interface User {
 	email: string
 	token: string
 	amount: number
+	gambles: Array<string>
 }

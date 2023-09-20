@@ -12,5 +12,6 @@ router.get("/getAllUsers", controller.getAllUsers)
 router.delete("/deleteUser", ValidateSchema(Schema.user.auth), Encrypt(), controller.deleteUser)
 router.post("/login", ValidateSchema(Schema.user.auth), controller.login)
 router.post("/rewardHandler", controller.rewardHandler)
+router.get("/getGambles", controller.getGambles)
 
 export = router

@@ -3,6 +3,7 @@ import mysql from "mysql2"
 import config from "../config/config"
 import Logging from "../library/Logging"
 import jwt from "jsonwebtoken"
+import User from "../models/User"
 const bcrypt = require("bcrypt")
 
 const params = config.server.mysql
@@ -15,18 +16,20 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 		const [existingUsers] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
 
 		// Check if user already exists
-		if (!Array.isArray(existingUsers) || existingUsers.length !== 0) return res.status(400).send({ status: "User already exists" })
+		if (!Array.isArray(existingUsers) || existingUsers.length !== 0) {
+			return res.status(400).send({ status: "User already exists" })
+		}
 
 		// Create JWT access token
 		const token = jwt.sign({ password, email }, config.keys.token)
 
-		// Insert the new user
-		await pool.query("INSERT INTO users (username, email, password, token) VALUES (?, ?, ?, ?, ?)", [
+		// Insert the new user with an empty "gambles" array
+		await pool.query("INSERT INTO users (username, email, password, token, gambles) VALUES (?, ?, ?, ?, ?)", [
 			username,
 			email,
 			password,
 			token,
-			amount,
+			JSON.stringify([]), // Initialize "gambles" as an empty JSON array
 		])
 
 		res.sendStatus(201)
@@ -101,69 +104,81 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
 	return res.status(200).send(result)
 }
 
-async function rewardHandler(req: Request, res: Response, next: NextFunction) {
+async function rewardHandler(req: Request, res: Response) {
 	const { result, email } = req.body
-	console.log(result, email)
 
 	try {
-		const query = `UPDATE users
-		SET amount = amount + ?
-		WHERE email = ?;
-	  `
+		const query = `UPDATE users SET amount = amount + ?, gambles = JSON_ARRAY_APPEND(gambles, '$', ?) WHERE email = ?`
 
 		let amount = 0
 
-		if (result[0] === "cherry" && result[1] === "cherry" && result[2] === "cherry") {
-			amount = 50
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else if ((result[0] === "cherry" && result[1] === "cherry") || (result[1] === "cherry" && result[2] === "cherry")) {
-			amount = 40
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else if (result[0] === "apple" && result[1] === "apple" && result[2] === "apple") {
-			amount = 20
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else if ((result[0] === "apple" && result[1] === "apple") || (result[1] === "apple" && result[2] === "apple")) {
-			amount = 10
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else if (result[0] === "banana" && result[1] === "banana" && result[2] === "banana") {
-			amount = 15
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else if ((result[0] === "banana" && result[1] === "banana") || (result[1] === "banana" && result[2] === "banana")) {
-			amount = 5
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else if (result[0] === "lemon" && result[1] === "lemon" && result[2] === "lemon") {
-			amount = 3
-			await pool.query(query, [amount, email])
-			return res.status(200).json({ amount })
-		} else {
-			// Retrieve the updated amount from the database
-			const [ret] = await pool.query(
-				`SELECT amount
-						  FROM users
-						  WHERE email = ? AND amount > 0;
-						`,
-				[email]
-			)
+		switch (true) {
+			case result.every((r: string) => r === "cherry"):
+				amount = 50
+				break
+			case result.slice(0, 2).every((r: string) => r === "cherry") || result.slice(1).every((r: string) => r === "cherry"):
+				amount = 40
+				break
+			case result.every((r: string) => r === "apple"):
+				amount = 20
+				break
+			case result.slice(0, 2).every((r: string) => r === "apple") || result.slice(1).every((r: string) => r === "apple"):
+				amount = 10
+				break
+			case result.every((r: string) => r === "banana"):
+				amount = 15
+				break
+			case result.slice(0, 2).every((r: string) => r === "banana") || result.slice(1).every((r: string) => r === "banana"):
+				amount = 5
+				break
+			case result.every((r: string) => r === "lemon"):
+				amount = 3
+				break
+			default:
+				const [ret] = await pool.query(`SELECT amount FROM users WHERE email = ? AND amount > 0`, [email])
 
-			if (Array.isArray(ret) && ret.length > 0) {
-				amount = -1
-			}
-
-			// Execute the query with the determined amount
-			await pool.query(query, [amount, email])
-
-			return res.status(200).json({ amount: amount })
+				if (Array.isArray(ret) && ret.length > 0) {
+					amount = -1
+				}
 		}
+
+		const gambleData = {
+			betAmount: amount,
+			game: "Slot Machine",
+			timestamp: new Date().toISOString(),
+		}
+
+		// Execute the query with the determined amount and gamble data
+		await pool.query(query, [amount, JSON.stringify(gambleData), email])
+
+		return res.status(200).json({ amount })
 	} catch (error) {
-		console.error(error)
+		Logging.error(error)
 		res.sendStatus(500)
 	}
 }
 
-export default { createUser, getAllUsers, deleteUser, login, rewardHandler }
+async function getGambles(req: Request, res: Response) {
+	const { email } = req.body
+
+	try {
+		const query = `SELECT gambles FROM users WHERE email = 'moshe@gmail.com'`
+		const [user] = await pool.query(query, [email])
+
+		if (Array.isArray(user) && user.length > 0) {
+			const { gambles }: any = user[0]
+
+			// Parse the "gambles" strings to JSON objects
+			const gamblesArray = gambles.map((g: string) => JSON.parse(g))
+
+			console.log(gamblesArray)
+			res.json(gamblesArray)
+		} else {
+			res.status(404).json({ message: "User not found" })
+		}
+	} catch (error) {
+		Logging.error(error)
+		res.sendStatus(500)
+	}
+}
+export default { createUser, getAllUsers, deleteUser, login, rewardHandler, getGambles }
