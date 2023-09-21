@@ -11,7 +11,8 @@ const pool = mysql.createPool(params).promise()
 
 export async function getAll() {
 	try {
-		const [result] = await pool.query(`SELECT * FROM games`)
+		const [result] = await pool.query(`SELECT * FROM games 
+										   ORDER BY created_at DESC;`)
 		return result
 	} catch (error) {
 		const err = Error(`getAll: ${error}`)
@@ -24,8 +25,8 @@ export async function insertData() {
 		const games = await insertFromJSON(filename)
 		// Define the SQL query to insert a game
 		const insertQuery = `
-                            INSERT INTO games (id, slug, title, providerName, thumb)
-                            VALUES (?, ?, ?, ?, ?)
+                            INSERT INTO games (id, slug, title, providerName, thumb, created_at)
+                            VALUES (?, ?, ?, ?, ?, NOW())
                             `
 		for (const game of games) {
 			const { id, slug, title, providerName, thumb } = game
@@ -58,8 +59,8 @@ export async function createNew(game: Game) {
 	const { id, slug, title, providerName, thumb } = game
 	try {
 		const insertQuery = `
-		INSERT INTO games (id, slug, title, providerName, thumb)
-		VALUES (?, ?, ?, ?, ?)
+		INSERT INTO games (id, slug, title, providerName, thumb, created_at)
+		VALUES (?, ?, ?, ?, ?, NOW())
 		`
 		// Check if a game with the same id already exists in the database
 		const [existingRows] = await pool.query("SELECT id FROM games WHERE id = ?", [id])

@@ -7,7 +7,7 @@ function GenericList({ Component, fetch, ...args }) {
 	const [originalList, setOriginalList] = useState([]) // Store the original list
 	const [list, setList] = useState([]) // Use this for filtering
 	const [currentPage, setCurrentPage] = useState(1)
-	const itemsPerPage = 10 // Number of items to display per page
+	const itemsPerPage = 5 // Number of items to display per page
 
 	useEffect(() => {
 		const fetchData = async () => {
