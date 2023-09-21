@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts"
 import { getGambles } from "../../API/axios"
 import { useSelector } from "react-redux"
 
@@ -33,7 +33,8 @@ const Stats = () => {
 				const arr = Array.from(dayToAmountMap, ([day, amount]) => ({ day, amount }))
 
 				// Filter out entries with zero amount
-				const filteredGambles = arr.filter((entry) => entry.amount !== 0)
+				const filteredGambles = arr
+				//.filter((entry) => entry.amount !== 0)
 
 				setGambles(filteredGambles)
 			} catch (error) {
@@ -64,11 +65,27 @@ const Stats = () => {
 		}
 	}
 
+	const gradientOffset = () => {
+		const dataMax = Math.max(...gambles.map((i) => i.amount))
+		const dataMin = Math.min(...gambles.map((i) => i.amount))
+
+		if (dataMax <= 0) {
+			return 0
+		}
+		if (dataMin >= 0) {
+			return 1
+		}
+
+		return dataMax / (dataMax - dataMin)
+	}
+
+	const off = gradientOffset()
+
 	return (
 		<ResponsiveContainer width="90%" height={500}>
-			<BarChart
+			<AreaChart
 				width={500}
-				height={300}
+				height={400}
 				data={gambles}
 				margin={{
 					top: 50,
@@ -77,13 +94,18 @@ const Stats = () => {
 					bottom: 5,
 				}}
 			>
-				<CartesianGrid />
+				<CartesianGrid strokeDasharray="3 3" />
 				<XAxis dataKey="day" />
 				<YAxis />
 				<Tooltip />
-				<Legend />
-				<Bar dataKey="amount" fill={"green"} />
-			</BarChart>
+				<defs>
+					<linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+						<stop offset={off} stopColor="green" stopOpacity={1} />
+						<stop offset={off} stopColor="red" stopOpacity={1} />
+					</linearGradient>
+				</defs>
+				<Area type="monotone" dataKey="amount" stroke="#000" fill="url(#splitColor)" />
+			</AreaChart>
 		</ResponsiveContainer>
 	)
 }
