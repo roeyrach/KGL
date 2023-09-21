@@ -6,11 +6,11 @@ import reelSound from "../../assets/sounds/start_play.wav"
 import coinSound from "../../assets/sounds/coin_win.wav"
 import stopSound from "../../assets/sounds/stop.wav"
 import winSound from "../../assets/sounds/win.wav"
+import coinsSVG from "../../assets/images/coins-solid.svg"
 import Button from "../../components/ButtonSpin/Button"
 import { rewardHandler } from "../../API/axios"
 import { useSelector, useDispatch } from "react-redux"
 import { setUser } from "../../redux/user/action"
-import coinsSVG from "../../assets/images/coins-solid.svg"
 
 function SlotMachine() {
 	const user = useSelector((state) => state.auth.user)

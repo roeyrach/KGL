@@ -162,7 +162,7 @@ async function getGambles(req: Request, res: Response) {
 	const { email } = req.body
 
 	try {
-		const query = `SELECT gambles FROM users WHERE email = 'moshe@gmail.com'`
+		const query = `SELECT gambles FROM users WHERE email = ?`
 		const [user] = await pool.query(query, [email])
 
 		if (Array.isArray(user) && user.length > 0) {

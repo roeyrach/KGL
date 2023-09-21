@@ -78,3 +78,21 @@ export async function rewardHandler(result, email) {
 		return { success: false, error: `Server error: ${statusCode}` }
 	}
 }
+
+export async function getGambles(email) {
+	try {
+		const response = await axios.post(
+			`${BASE_URL}/users/getGambles`,
+			{ email },
+			{
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		)
+		if (response.status === 200) return response
+	} catch (error) {
+		const statusCode = error.response.status
+		return { success: false, error: `Server error: ${statusCode}` }
+	}
+}
