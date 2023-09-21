@@ -5,7 +5,7 @@ import { Provider } from "react-redux"
 import { store, persistor } from "../redux/store" // Import both the store and persistor
 import SignIn from "../pages/Auth/SignIn"
 import SignUp from "../pages/Auth/SignUp"
-import Home from "../pages/Home"
+import Home from "../pages/Home/Home"
 import SlotMachine from "../pages/SlotMachine/SlotMachine"
 import { PersistGate } from "redux-persist/integration/react"
 import Stats from "../pages/Stats/Stats"
