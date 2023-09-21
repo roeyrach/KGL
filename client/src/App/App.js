@@ -9,6 +9,7 @@ import Home from "../pages/Home/Home"
 import SlotMachine from "../pages/SlotMachine/SlotMachine"
 import { PersistGate } from "redux-persist/integration/react"
 import Stats from "../pages/Stats/Stats"
+import BlackJack from "../pages/BlackJack/BlackJack"
 
 function App() {
 	return (
@@ -22,6 +23,7 @@ function App() {
 							<Route path="/sign-up" element={<SignUp />} />
 							<Route path="/sign-in" element={<SignIn />} />
 							<Route path="/slot-machine" element={<SlotMachine />} />
+							<Route path="/black-jack" element={<BlackJack />} />
 							<Route path="/stats" element={<Stats />} />
 						</Routes>
 					</Router>
